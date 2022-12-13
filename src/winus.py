@@ -42,3 +42,12 @@ def fetchReview():
     myresult = mycursor.fetchall()
     print(rowCount)
     return myresult
+
+@app.route("/changeLike", methods=['GET'])
+def changeLike():
+    if (request.args.get("increment") == "true"):
+        mycursor.execute("UPDATE reviews SET likeCount = likeCount + 1 WHERE id=" + request.args.get("id"))
+    else:
+        mycursor.execute("UPDATE reviews SET likeCount = likeCount - 1 WHERE id=" + request.args.get("id"))
+
+

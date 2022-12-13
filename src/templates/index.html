@@ -22,20 +22,19 @@
             <input type="submit" value="Submit">
         </form>
         <button onclick="getReviews()">CIao</button>
-        <center>
-        <div id="cardContainer">
-            <div class="card w-75" style="display: none" id="cardTemplate">
+        <div id="cardContainer" style="margin-left: 10%; margin-right: 10%;">
+            <div class="card" style="display: none" id="cardTemplate">
                 <div class="card-header">
-                    username
+                    <p>username</p>
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">productName</h5>
                     <p class="card-text">reviewText</p>
-                    <button class="btn btn-primary">Go somewhere</a>
+                    <button onclick="setLike(this.id)" class="btn btn-primary">👍0</a>
+                    <button onclick="setDisike(this.id)"class="btn btn-primary">👎0</a>
                 </div>
             </div>
         </div>
-        </center>
     </div>
     
     
@@ -43,12 +42,13 @@
 <script>
     let rowCount = parseInt('{{count}}');
     let startRow = 1;
+    const cardContainer = document.getElementById("cardContainer");
+
     function getReviews()
     {
         let url;
         const cardTemplate = document.getElementById("cardTemplate").cloneNode(true);
         cardTemplate.style.display = "block";
-        const cardContainer = document.getElementById("cardContainer");
 
         //get JSON (https://stackoverflow.com/questions/12460378/how-to-get-json-from-url-in-javascript)
         if (rowCount>=10)
@@ -72,14 +72,24 @@
             obj.forEach(function(row) {
                 const tempNode = cardTemplate.cloneNode(true);
                 tempNode.removeAttribute("id");
-                tempNode.childNodes[1].innerHTML = row[2];
+                tempNode.childNodes[1].childNodes[1].innerHTML = row[2];
                 tempNode.childNodes[3].childNodes[1].innerHTML = row[1];
                 tempNode.childNodes[3].childNodes[3].innerHTML = row[4];
+                tempNode.childNodes[3].childNodes[5].setAttribute("id", row[0]);
+                tempNode.childNodes[3].childNodes[6].setAttribute("id", row[0]);
+                tempNode.setAttribute("id",  row[0]);
                 cardContainer.appendChild(tempNode);
 
             });
         });
        
+    }
+
+    function setLike(id)
+    {
+        let startId = 2+id;
+        const card =  cardContainer.childNodes[startId];
+        
     }
     getReviews();
     </script>
