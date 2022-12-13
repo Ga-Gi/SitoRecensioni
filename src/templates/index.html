@@ -18,5 +18,19 @@
         <input type="number" name="rating">
         <input type="submit" value="Submit">
     </form>
+
+    
 </body>
+<script>
+    //get JSON (https://stackoverflow.com/questions/12460378/how-to-get-json-from-url-in-javascript)
+    let url = '/fetchReview?rowNumber{{rowNumber}}';
+    var obj;
+    fetch(url)
+    .then(res => res.json())
+    .then(out => obj = out)
+    .then(function(obj)
+    {
+        console.log(obj);
+    });
+</script>
 </html>
