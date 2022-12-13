@@ -36,8 +36,9 @@ def insert():
 
 @app.route("/fetchReview", methods=['GET'])
 def fetchReview():
-    rowNumber = request.args.get("rowNumber")
-    mycursor.execute("SELECT * FROM reviews LIMIT" + rowNumber)
+    rowCount = request.args.get("rowCount")
+    startRow = request.args.get("startRow")
+    mycursor.execute("SELECT * FROM reviews WHERE id>=" + startRow +" LIMIT " + rowCount)
     myresult = mycursor.fetchall()
-    print(myresult)
+    print(rowCount)
     return myresult
