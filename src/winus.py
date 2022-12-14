@@ -40,7 +40,6 @@ def fetchReview():
     startRow = request.args.get("startRow")
     mycursor.execute("SELECT * FROM reviews WHERE id>=" + startRow +" LIMIT " + rowCount)
     myresult = mycursor.fetchall()
-    print(rowCount)
     return myresult
 
 @app.route("/changeLike", methods=['GET'])
@@ -48,6 +47,17 @@ def changeLike():
     if (request.args.get("increment") == "true"):
         mycursor.execute("UPDATE reviews SET likeCount = likeCount + 1 WHERE id=" + request.args.get("id"))
     else:
-        mycursor.execute("UPDATE reviews SET likeCount = likeCount - 1 WHERE id=" + request.args.get("id"))
+        mycursor.execute("UPDATE reviews SET likeCount = IF(likeCount>0, likeCount - 1, likeCount) WHERE id=" + request.args.get("id"))
+    mydb.commit()
+    return request.args.get("increment")
+
+@app.route("/changeDislike", methods=['GET'])
+def changeDislike():
+    if (request.args.get("increment") == "true"):
+        mycursor.execute("UPDATE reviews SET dislikeCount = dislikeCount + 1 WHERE id=" + request.args.get("id"))
+    else:
+        mycursor.execute("UPDATE reviews SET dislikeCount = IF(dislikeCount>0, dislikeCount - 1, dislikeCount)  WHERE id=" + request.args.get("id"))
+    mydb.commit()
+    return request.args.get("increment")
 
 

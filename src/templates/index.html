@@ -30,8 +30,8 @@
                 <div class="card-body">
                     <h5 class="card-title">productName</h5>
                     <p class="card-text">reviewText</p>
-                    <button onclick="setLike(this.id)" class="btn btn-primary">👍0</a>
-                    <button onclick="setDisike(this.id)"class="btn btn-primary">👎0</a>
+                    <button onclick="setLike(this.id)" class="btn btn-primary" checked="false">0</a>
+                    <button onclick="setDislike(this.id)"class="btn btn-primary" checked="false">0</a>
                 </div>
             </div>
         </div>
@@ -77,6 +77,8 @@
                 tempNode.childNodes[3].childNodes[3].innerHTML = row[4];
                 tempNode.childNodes[3].childNodes[5].setAttribute("id", row[0]);
                 tempNode.childNodes[3].childNodes[6].setAttribute("id", row[0]);
+                tempNode.childNodes[3].childNodes[5].innerHTML = row[6];
+                tempNode.childNodes[3].childNodes[6].innerHTML = row[7];
                 tempNode.setAttribute("id",  row[0]);
                 cardContainer.appendChild(tempNode);
 
@@ -87,8 +89,81 @@
 
     function setLike(id)
     {
-        let startId = 2+id;
-        const card =  cardContainer.childNodes[startId];
+        const cardId = 2+parseInt(id);
+        const card = cardContainer.childNodes[cardId];
+        const cardLikeButton = card.childNodes[3].childNodes[5];
+        let url = '';
+        
+        if(cardLikeButton.getAttribute("checked")=="true")
+        {
+            url = '/changeLike?id='+id+'&increment=false';
+        }
+        else if(cardLikeButton.getAttribute("checked")=="false")
+        {
+            url = '/changeLike?id='+id+'&increment=true';
+        }
+        var obj;
+
+        fetch(url)
+        .then(res => res.json())
+        .then(out => obj = out)
+        .then(function(obj)
+        {
+            console.log(obj);
+            if(obj)
+            {
+                cardLikeButton.innerHTML=parseInt(cardLikeButton.innerHTML)+1;
+                cardLikeButton.setAttribute("checked", true);
+            }
+            else
+            {                
+                if(cardLikeButton.innerHTML!="0")
+                {
+                    cardLikeButton.innerHTML=parseInt(cardLikeButton.innerHTML)-1;
+                }
+                cardLikeButton.setAttribute("checked", false);
+            }
+        });
+        
+    }
+
+    function setDislike(id)
+    {
+        const cardId = 2+parseInt(id);
+        const card = cardContainer.childNodes[cardId];
+        const cardDislikeButton = card.childNodes[3].childNodes[6];
+        let url = '';
+        
+        if(cardDislikeButton.getAttribute("checked")=="true")
+        {
+            url = '/changeDislike?id='+id+'&increment=false';
+        }
+        else if(cardDislikeButton.getAttribute("checked")=="false")
+        {
+            url = '/changeDislike?id='+id+'&increment=true';
+        }
+        var obj;
+
+        fetch(url)
+        .then(res => res.json())
+        .then(out => obj = out)
+        .then(function(obj)
+        {
+            console.log(obj);
+            if(obj)
+            {
+                cardDislikeButton.innerHTML=parseInt(cardDislikeButton.innerHTML)+1;
+                cardDislikeButton.setAttribute("checked", true);
+            }
+            else
+            {                
+                if(cardDislikeButton.innerHTML!="0")
+                {
+                    cardDislikeButton.innerHTML=parseInt(cardDislikeButton.innerHTML)-1;
+                }
+                cardDislikeButton.setAttribute("checked", false);
+            }
+        });
         
     }
     getReviews();
