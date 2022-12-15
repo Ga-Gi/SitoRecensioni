@@ -21,20 +21,31 @@
             <input type="number" name="rating">
             <input type="submit" value="Submit">
         </form>
-        <button onclick="getReviews()">CIao</button>
-        <div id="cardContainer" style="margin-left: 10%; margin-right: 10%;">
-            <div class="card" style="display: none" id="cardTemplate">
-                <div class="card-header">
-                    <p>username</p>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">productName</h5>
-                    <p class="card-text">reviewText</p>
-                    <button onclick="setLike(this.id)" class="btn btn-primary" checked="false">0</a>
-                    <button onclick="setDislike(this.id)"class="btn btn-primary" checked="false">0</a>
-                </div>
+        <button id="nextPage">-></button>
+        <button id="previousPage"><-</button>
+
+        <div class="card" style="display: none" id="cardTemplate">
+            <div class="card-header">
+                <p>username</p>
+                <p>0</p>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">productName</h5>
+                <p class="card-text">reviewText</p>
+                <button onclick="setLike(this.id)" class="btn btn-primary" checked="false">
+                    <div>👍</div>
+                    <div>0</div>
+                </button>
+                <button onclick="setDislike(this.id)"class="btn btn-primary" checked="false">
+                    <div>👎</div>
+                    <div>0</div>
+                </button>
             </div>
         </div>
+    </div>
+
+    <div id="cardContainer" style="margin-left: 10%; margin-right: 10%;">
+            
     </div>
     
     
@@ -43,25 +54,49 @@
     let rowCount = parseInt('{{count}}');
     let startRow = 1;
     const cardContainer = document.getElementById("cardContainer");
-
-    function getReviews()
-    {
-        let url;
-        const cardTemplate = document.getElementById("cardTemplate").cloneNode(true);
-        cardTemplate.style.display = "block";
-
-        //get JSON (https://stackoverflow.com/questions/12460378/how-to-get-json-from-url-in-javascript)
-        if (rowCount>=10)
+    document.getElementById("nextPage").onclick = function(){
+        
+        cardContainer.innerHTML = "";
+        if(rowCount>10)
         {
-            url = '/fetchReview?rowCount=10&startRow='+startRow;
             rowCount-=10;
             startRow+=10;
-        } 
+            getReviews(startRow, 10);
+
+        }
         else
         {
-            url = '/fetchReview?rowCount='+rowCount+'&startRow='+startRow;
+            getReviews(startRow, rowCount);
         }
-    
+
+        
+
+        
+    };
+    document.getElementById("previousPage").onclick = function(){
+        
+        cardContainer.innerHTML = "";
+        if(startRow>10)
+        {
+            rowCount+=10;
+            startRow-=10; 
+            getReviews(startRow, 10);
+        }
+        else
+        {
+            getReviews(startRow, rowCount);
+            rowCount+=10;
+        }
+    };
+    function getReviews(startRow, rowCount)
+    {
+        console.log(startRow);
+        const url = '/fetchReview?rowCount='+rowCount+'&startRow='+startRow;
+        const cardTemplate = document.getElementById("cardTemplate").cloneNode(true);
+        cardTemplate.style.display = "block";
+        //get JSON (https://stackoverflow.com/questions/12460378/how-to-get-json-from-url-in-javascript)     
+           
+        console.log(url)
         var obj;
         fetch(url)
         .then(res => res.json())
@@ -73,25 +108,28 @@
                 const tempNode = cardTemplate.cloneNode(true);
                 tempNode.removeAttribute("id");
                 tempNode.childNodes[1].childNodes[1].innerHTML = row[2];
+                tempNode.childNodes[1].childNodes[3].innerHTML = row[5];
                 tempNode.childNodes[3].childNodes[1].innerHTML = row[1];
                 tempNode.childNodes[3].childNodes[3].innerHTML = row[4];
                 tempNode.childNodes[3].childNodes[5].setAttribute("id", row[0]);
-                tempNode.childNodes[3].childNodes[6].setAttribute("id", row[0]);
-                tempNode.childNodes[3].childNodes[5].innerHTML = row[6];
-                tempNode.childNodes[3].childNodes[6].innerHTML = row[7];
+                tempNode.childNodes[3].childNodes[7].setAttribute("id", row[0]);
+                tempNode.childNodes[3].childNodes[5].childNodes[3].innerHTML = row[6];
+                tempNode.childNodes[3].childNodes[7].childNodes[3].innerHTML = row[7];
                 tempNode.setAttribute("id",  row[0]);
                 cardContainer.appendChild(tempNode);
 
             });
         });
+        console.log(startRow);
        
     }
 
     function setLike(id)
     {
-        const cardId = 2+parseInt(id);
+        const cardId = parseInt(id);
         const card = cardContainer.childNodes[cardId];
         const cardLikeButton = card.childNodes[3].childNodes[5];
+        //TODO: sistemare il checked con i div
         let url = '';
         
         if(cardLikeButton.getAttribute("checked")=="true")
@@ -103,7 +141,7 @@
             url = '/changeLike?id='+id+'&increment=true';
         }
         var obj;
-
+        console.log(url)
         fetch(url)
         .then(res => res.json())
         .then(out => obj = out)
@@ -112,14 +150,14 @@
             console.log(obj);
             if(obj)
             {
-                cardLikeButton.innerHTML=parseInt(cardLikeButton.innerHTML)+1;
+                cardLikeButton.childNodes[3].innerHTML=parseInt(cardLikeButton.childNodes[3].innerHTML)+1;
                 cardLikeButton.setAttribute("checked", true);
             }
             else
             {                
                 if(cardLikeButton.innerHTML!="0")
                 {
-                    cardLikeButton.innerHTML=parseInt(cardLikeButton.innerHTML)-1;
+                    cardLikeButton.childNodes[3].innerHTML=parseInt(cardLikeButton.childNodes[3].innerHTML)-1;
                 }
                 cardLikeButton.setAttribute("checked", false);
             }
@@ -129,9 +167,11 @@
 
     function setDislike(id)
     {
-        const cardId = 2+parseInt(id);
+        const cardId = parseInt(id);
         const card = cardContainer.childNodes[cardId];
-        const cardDislikeButton = card.childNodes[3].childNodes[6];
+        const cardDislikeButton = card.childNodes[3].childNodes[7];
+        //TODO: sistemare il checked con i div
+
         let url = '';
         
         if(cardDislikeButton.getAttribute("checked")=="true")
@@ -149,23 +189,32 @@
         .then(out => obj = out)
         .then(function(obj)
         {
-            console.log(obj);
+            console.log(cardDislikeButton.childNodes);
             if(obj)
             {
-                cardDislikeButton.innerHTML=parseInt(cardDislikeButton.innerHTML)+1;
+                cardDislikeButton.childNodes[3].innerHTML=parseInt(cardDislikeButton.childNodes[3].innerHTML)+1;
                 cardDislikeButton.setAttribute("checked", true);
             }
             else
             {                
                 if(cardDislikeButton.innerHTML!="0")
                 {
-                    cardDislikeButton.innerHTML=parseInt(cardDislikeButton.innerHTML)-1;
+                    cardDislikeButton.childNodes[3].innerHTML=parseInt(cardDislikeButton.childNodes[3].innerHTML)-1;
                 }
                 cardDislikeButton.setAttribute("checked", false);
             }
         });
         
     }
-    getReviews();
+    if(rowCount>10)
+    {
+        getReviews(startRow,10);
+        rowCount-=10;
+        startRow+=10;
+    }
+    else
+    {
+        getReviews(startRow,rowCount);
+    }
     </script>
 </html>
