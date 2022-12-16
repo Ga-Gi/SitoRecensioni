@@ -6,13 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style/style.css') }}">
+    
+
     <title>Sito Recensioni</title>
 </head>
 <body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <div class="container-md" >
-        <center><h1>Derecensioner</h1></center>
-        
+        <br>
+        <center><h1 class="titolo">REViO</h1></center>
+        <br><br>
         <div class="card formCard" style="margin-left: 10%; margin-right: 10%;">
             <div class="card-header" style="background-color: #003c70;">
                 <br>
@@ -49,7 +52,7 @@
                 <p>0</p>
             </div>
             <div class="card-body">
-                <h5 class="card-title">productName</h5>
+                <h5 class="card-title prodotto">productName</h5>
                 <p class="card-text">reviewText</p>
                 <button onclick="setLike(this.id)" class="btn btn-primary" checked="false">
                     <div>👍</div>

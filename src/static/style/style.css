@@ -3,7 +3,12 @@ body
     background-image: url("/static/img/why.png");
     background-repeat: no-repeat;
     background-size: 5000%;
-}
+    font-family: 'Corbel', sans-serif; font-size: 16px;
+
+
+
+
+} 
 .formTitle
 {
     color: white;
@@ -15,4 +20,23 @@ body
 .formCard
 {
     box-shadow: 10px 10px;
+}
+.titolo
+{
+    position: relative;
+    font-size: 6em;
+    letter-spacing: 15px;
+    font-family: fantasy;
+    color: #71f899;
+    width: 100%;
+    text-align: center;
+    -webkit-box-reflect: below 1px linear-gradient(transparent, #0008);
+    line-height: 0.70em;
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.618);
+    -webkit-text-stroke: 2px rgb(90, 184, 86);
+}
+
+.prodotto
+{
+    font-weight: 700;
 }
