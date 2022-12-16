@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 import mysql.connector
 from datetime import date
 app = Flask(__name__)
+
+
 
 mydb = mysql.connector.connect(
         host="localhost",
@@ -16,7 +18,6 @@ mycursor = mydb.cursor()
 def main():
     
     mycursor.execute("SELECT COUNT(*) FROM reviews")
-
     myresult = mycursor.fetchall()
     
     return render_template('index.html', count=myresult[0][0])

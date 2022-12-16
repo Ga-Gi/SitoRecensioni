@@ -1,0 +1,10 @@
+body
+{
+    background-image: url("/static/img/why.png");
+    background-repeat: no-repeat;
+    background-size: 600%;
+}
+.formTitle
+{
+    color: white;
+}
