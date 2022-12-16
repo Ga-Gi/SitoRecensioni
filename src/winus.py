@@ -33,7 +33,7 @@ def insert():
     mydb.commit()
     
     print(mycursor.rowcount, "record inserted.")
-    return 'OSSI'
+    return '<script>window.location.href="/"</script>'
 
 @app.route("/fetchReview", methods=['GET'])
 def fetchReview():

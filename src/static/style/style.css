@@ -2,7 +2,7 @@ body
 {
     background-image: url("/static/img/why.png");
     background-repeat: no-repeat;
-    background-size: 600%;
+    background-size: 5000%;
 }
 .formTitle
 {
@@ -14,7 +14,5 @@ body
 }
 .formCard
 {
-    /* box-shadow: 10px 10px 50px #0156a0; */
     box-shadow: 10px 10px;
-
 }

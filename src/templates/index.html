@@ -12,8 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <div class="container-md" >
         <center><h1>Derecensioner</h1></center>
-        <button id="nextPage">-></button>
-        <button id="previousPage"><-</button>
+        
         <div class="card formCard" style="margin-left: 10%; margin-right: 10%;">
             <div class="card-header" style="background-color: #003c70;">
                 <br>
@@ -45,7 +44,7 @@
 
 
         <div class="card reviewCard" style="display: none; margin-top: 5%;" id="cardTemplate">
-            <div class="card-header">
+            <div class="card-header text-bg-secondary">
                 <p>username</p>
                 <p>0</p>
             </div>
@@ -56,7 +55,7 @@
                     <div>👍</div>
                     <div>0</div>
                 </button>
-                <button onclick="setDislike(this.id)"class="btn btn-primary" checked="false">
+                <button onclick="setDislike(this.id)" class="btn btn-primary " checked="false">
                     <div>👎</div>
                     <div>0</div>
                 </button>
@@ -67,6 +66,14 @@
 
     <div id="cardContainer" style="margin-left: 10%; margin-right: 10%;"></div>
     <br><br>
+    <center>
+        <button class="btn btn-primary" id="previousPage"><-</button>
+        <p class="badge bg-secondary text-wrap" id="pageNumber" style="display: inline">1</p>
+        <button class="btn btn-primary" id="nextPage">-></button>
+
+    </center>
+    <br><br>
+
 </div>
     
     
@@ -75,46 +82,80 @@
     let rowCount = parseInt('{{count}}');
     let startRow = 1;
     let pageNumber = 0;
+    
     const cardContainer = document.getElementById("cardContainer");
-    document.getElementById("nextPage").onclick = function(){
+    document.getElementById("nextPage").onclick = function()
+    {
+        if(rowCount>0)
+        {
+            cardContainer.innerHTML = "";
+            if(rowCount>10)
+            {
+                rowCount-=10;
+                startRow+=10;
+                getReviews(startRow, 10);
+                
+            }
+            else
+            {
+                getReviews(startRow, rowCount);
+                rowCount = 0;
+            }
+            pageNumber++;
+            document.getElementById("pageNumber").innerHTML = pageNumber+1;
+        }
         
-        cardContainer.innerHTML = "";
-        if(rowCount>10)
-        {
-            rowCount-=10;
-            startRow+=10;
-            getReviews(startRow, 10);
-            
-        }
-        else
-        {
-            getReviews(startRow, rowCount);
-        }
-        pageNumber++;
 
     };
-    document.getElementById("previousPage").onclick = function(){
-        
-        cardContainer.innerHTML = "";
-        if(startRow>10)
-        {
-            rowCount+=10;
-            startRow-=10; 
-            getReviews(startRow, 10);
-        }
-        else
-        {
-            getReviews(startRow, rowCount);
-            rowCount+=10;
-        }
+    document.getElementById("previousPage").onclick = function()
+    {
         if(pageNumber>0)
         {
-            pageNumber--;
+            cardContainer.innerHTML = "";
+            if(startRow>10)
+            {
+                rowCount+=10;
+                startRow-=10; 
+                getReviews(startRow, 10);
+            }
+            else
+            {
+                getReviews(startRow, rowCount);
+                rowCount+=10;
+            }
+            if(pageNumber>0)
+            {
+                pageNumber--;
+            }
+            document.getElementById("pageNumber").innerHTML = pageNumber+1;
         }
+
     };
+    function setLike(id)
+    {
+        const cardId = parseInt(id)-(10*pageNumber)-1;
+        const card = cardContainer.childNodes[cardId];
+        const cardLikeButton = card.childNodes[3].childNodes[5];
+        const cardDislikeButton = card.childNodes[3].childNodes[7];
+        if(cardDislikeButton.getAttribute("checked")=="false")
+        {
+            setValue(cardLikeButton, "/changeLike", id)
+        }
+        
+    }
+    function setDislike(id)
+    {
+        const cardId = parseInt(id)-(10*pageNumber)-1;
+        const card = cardContainer.childNodes[cardId];
+        const cardLikeButton = card.childNodes[3].childNodes[5];
+        const cardDislikeButton = card.childNodes[3].childNodes[7];
+        if(cardLikeButton.getAttribute("checked")=="false")
+        {
+            setValue(cardDislikeButton, "/changeDislike", id)
+        }
+    }
     function getReviews(startRow, rowCount)
     {
-        console.log(startRow);
         const url = '/fetchReview?rowCount='+rowCount+'&startRow='+startRow;
         const cardTemplate = document.getElementById("cardTemplate").cloneNode(true);
         cardTemplate.style.display = "block";
@@ -132,7 +173,7 @@
                 const tempNode = cardTemplate.cloneNode(true);
                 tempNode.removeAttribute("id");
                 tempNode.childNodes[1].childNodes[1].innerHTML = row[2];
-                tempNode.childNodes[1].childNodes[3].innerHTML = row[5];
+                tempNode.childNodes[1].childNodes[3].innerHTML = "<img src=/static/img/rating/"+row[5]+".png>"; //rating
                 tempNode.childNodes[3].childNodes[1].innerHTML = row[1];
                 tempNode.childNodes[3].childNodes[3].innerHTML = row[4];
                 tempNode.childNodes[3].childNodes[5].setAttribute("id", row[0]);
@@ -147,62 +188,18 @@
         console.log(startRow);
     }
 
-    function setLike(id)
+
+    function setValue(button, urlEndpoint, id)
     {
-        const cardId = parseInt(id)-(10*pageNumber)-1;
-        const card = cardContainer.childNodes[cardId];
-        const cardLikeButton = card.childNodes[3].childNodes[5];
         let url = '';
         
-        if(cardLikeButton.getAttribute("checked")=="true")
+        if(button.getAttribute("checked")=="true")
         {
-            url = '/changeLike?id='+id+'&increment=false';
+            url = urlEndpoint+'?id='+id+'&increment=false';
         }
-        else if(cardLikeButton.getAttribute("checked")=="false")
+        else if(button.getAttribute("checked")=="false")
         {
-            url = '/changeLike?id='+id+'&increment=true';
-        }
-        var obj;
-        console.log(url)
-        fetch(url)
-        .then(res => res.json())
-        .then(out => obj = out)
-        .then(function(obj)
-        {
-            console.log(obj);
-            if(obj)
-            {
-                cardLikeButton.childNodes[3].innerHTML=parseInt(cardLikeButton.childNodes[3].innerHTML)+1;
-                cardLikeButton.setAttribute("checked", true);
-            }
-            else
-            {                
-                if(cardLikeButton.innerHTML!="0")
-                {
-                    cardLikeButton.childNodes[3].innerHTML=parseInt(cardLikeButton.childNodes[3].innerHTML)-1;
-                }
-                cardLikeButton.setAttribute("checked", false);
-            }
-        });
-        
-    }
-
-    function setDislike(id)
-    {
-        const cardId = parseInt(id)-(10*pageNumber)-1;
-        console.log(cardId)
-        const card = cardContainer.childNodes[cardId];
-        const cardDislikeButton = card.childNodes[3].childNodes[7];
-
-        let url = '';
-        
-        if(cardDislikeButton.getAttribute("checked")=="true")
-        {
-            url = '/changeDislike?id='+id+'&increment=false';
-        }
-        else if(cardDislikeButton.getAttribute("checked")=="false")
-        {
-            url = '/changeDislike?id='+id+'&increment=true';
+            url = urlEndpoint+'?id='+id+'&increment=true';
         }
         var obj;
 
@@ -211,22 +208,24 @@
         .then(out => obj = out)
         .then(function(obj)
         {
-            console.log(cardDislikeButton.childNodes);
             if(obj)
             {
-                cardDislikeButton.childNodes[3].innerHTML=parseInt(cardDislikeButton.childNodes[3].innerHTML)+1;
-                cardDislikeButton.setAttribute("checked", true);
+                button.childNodes[3].innerHTML=parseInt(button.childNodes[3].innerHTML)+1;
+                button.setAttribute("checked", true);
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-success');
             }
             else
             {                
-                if(cardDislikeButton.innerHTML!="0")
+                if(button.innerHTML!="0")
                 {
-                    cardDislikeButton.childNodes[3].innerHTML=parseInt(cardDislikeButton.childNodes[3].innerHTML)-1;
+                    button.childNodes[3].innerHTML=parseInt(button.childNodes[3].innerHTML)-1;
                 }
-                cardDislikeButton.setAttribute("checked", false);
+                button.setAttribute("checked", false);
+                button.classList.remove('btn-success');
+                button.classList.add('btn-primary');
             }
         });
-        
     }
     if(rowCount>10)
     {
