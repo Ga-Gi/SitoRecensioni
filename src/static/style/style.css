@@ -8,3 +8,13 @@ body
 {
     color: white;
 }
+.reviewCard
+{
+    box-shadow: 10px 10px;
+}
+.formCard
+{
+    /* box-shadow: 10px 10px 50px #0156a0; */
+    box-shadow: 10px 10px;
+
+}
