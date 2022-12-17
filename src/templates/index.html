@@ -176,7 +176,7 @@
                 const tempNode = cardTemplate.cloneNode(true);
                 tempNode.removeAttribute("id");
                 tempNode.childNodes[1].childNodes[1].innerHTML = row[2];
-                tempNode.childNodes[1].childNodes[3].innerHTML = "<img src=/static/img/rating/"+row[5]+".png>"; //rating
+                tempNode.childNodes[1].childNodes[3].innerHTML = "<img src=/static/img/rating/"+row[5]+".png height='20'>"; //rating
                 tempNode.childNodes[3].childNodes[1].innerHTML = row[1];
                 tempNode.childNodes[3].childNodes[3].innerHTML = row[4];
                 tempNode.childNodes[3].childNodes[5].setAttribute("id", row[0]);
